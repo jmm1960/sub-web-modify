@@ -889,9 +889,9 @@ export default {
       form: {
         sourceSubUrl: "",
         clientType: "",
-        customBackend: this.getUrlParam() == "" ? "https://api.v1.mk" : this.getUrlParam(),
-        shortType: "https://v1.mk/short",
-        remoteConfig: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Full_NoAuto.ini",
+        customBackend: this.getUrlParams().backend == "" ? "https://api.v1.mk" : this.getUrlParams().backend,
+        shortType: this.getUrlParams().short == "" ? "https://v1.mk/short" : this.getUrlParams().short,
+        remoteConfig: this.getUrlParams().remote == "" ? "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Full_NoAuto.ini" : this.getUrlParams().remote,
         excludeRemarks: "",
         includeRemarks: "",
         filename: "",
@@ -946,7 +946,7 @@ export default {
     this.isPC = this.$getOS().isPc;
   },
   mounted() {
-    this.tanchuang();
+    // this.tanchuang();
     this.form.clientType = "clash";
     this.getBackendVersion();
     this.anhei();
@@ -966,16 +966,21 @@ export default {
     selectChanged() {
       this.getBackendVersion();
     },
-    getUrlParam() {
+    getUrlParams() {
+      let params = {
+        backend: "",
+        short: "",
+        remote: ""
+      };
       let query = window.location.search.substring(1);
       let vars = query.split('&');
       for (let i = 0; i < vars.length; i++) {
-        var pair = vars[i].split('=');
-        if (pair[0] == "backend") {
-          return decodeURIComponent(pair[1]);
+        let pair = vars[i].split('=');
+        if (Object.keys(params).includes(pair[0])) {
+          params[pair[0]] = decodeURIComponent(pair[1]);
         }
       }
-      return "";
+      return params;
     },
     anhei() {
       const getLocalTheme = window.localStorage.getItem("localTheme");
